@@ -717,360 +717,360 @@ displayRecs(imgPaths[123], cosine_sim_tf, corrected=False)
 # In[53]:
 
 
-# clusterFeatsByPost = []
-# tf_imgFeats = [(s,f) for s,f in zip(tf_imgSlugs, features_tf)]
+clusterFeatsByPost = []
+tf_imgFeats = [(s,f) for s,f in zip(tf_imgSlugs, features_tf)]
 
-# for slug in postSlugs:
-#     postFeats = []
-#     imagesInPost = postImgs[slug]
+for slug in postSlugs:
+    postFeats = []
+    imagesInPost = postImgs[slug]
 
-#     # Posts without images
-#     if len(imagesInPost) == 0:
-#         postFeats = [0] * features_tf.shape[1]
-#         clusterFeatsByPost.append(postFeats)
-#         continue
+    # Posts without images
+    if len(imagesInPost) == 0:
+        postFeats = [0] * features_tf.shape[1]
+        clusterFeatsByPost.append(postFeats)
+        continue
         
-#     # Get the array of images in a post
-#     for s, feat in tf_imgFeats:
-#         if s in imagesInPost:
-#             postFeats.append(feat)
+    # Get the array of images in a post
+    for s, feat in tf_imgFeats:
+        if s in imagesInPost:
+            postFeats.append(feat)
             
-#     # Again, posts without images (because of GIFs)
-#     if len(postFeats) == 0:
-#         postFeats = [0] * features_tf.shape[1]
-#         clusterFeatsByPost.append(postFeats)
-#         continue
+    # Again, posts without images (because of GIFs)
+    if len(postFeats) == 0:
+        postFeats = [0] * features_tf.shape[1]
+        clusterFeatsByPost.append(postFeats)
+        continue
 
-#     # Combine the features together
-#     postFeats = np.mean(np.array(postFeats), axis=0)
-#     clusterFeatsByPost.append(postFeats)
-
-
-# # In[54]:
+    # Combine the features together
+    postFeats = np.mean(np.array(postFeats), axis=0)
+    clusterFeatsByPost.append(postFeats)
 
 
-# # Expect: (# of posts, CNN output size)
-# clusterFeatsByPost = np.array(clusterFeatsByPost)
-# clusterFeatsByPost.shape
+# In[54]:
 
 
-# # In[55]:
+# Expect: (# of posts, CNN output size)
+clusterFeatsByPost = np.array(clusterFeatsByPost)
+clusterFeatsByPost.shape
 
 
-# cosine_sim_art = cosine_similarity(clusterFeatsByPost)
-# cosine_sim_art.shape
+# In[55]:
 
 
-# # In[56]:
+cosine_sim_art = cosine_similarity(clusterFeatsByPost)
+cosine_sim_art.shape
 
 
-# # Recommendation model with k closest works
-# def artRecommender(slug, cosine_sim, k=10, showSim=False, sigFigs=4):
-#     idx = listRes.index(slug)
-#     sim_scores = list(enumerate(cosine_sim[idx]))
-#     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-#     sim_scores = sim_scores[1:k+1]
-#     if showSim:
-#         sim_slugs = [(listRes[item[0]], round(item[1], sigFigs)) for item in sim_scores] 
-#     else:
-#         sim_slugs = [listRes[item[0]] for item in sim_scores]
-#     return sim_slugs
+# In[56]:
 
 
-# # In[57]:
+# Recommendation model with k closest works
+def artRecommender(slug, cosine_sim, k=10, showSim=False, sigFigs=4):
+    idx = listRes.index(slug)
+    sim_scores = list(enumerate(cosine_sim[idx]))
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:k+1]
+    if showSim:
+        sim_slugs = [(listRes[item[0]], round(item[1], sigFigs)) for item in sim_scores] 
+    else:
+        sim_slugs = [listRes[item[0]] for item in sim_scores]
+    return sim_slugs
 
 
-# def printImgGrid(postSlug):
-#     fig = plt.figure()
-#     for i, imgPath in enumerate(postImgs[postSlug], start=1):
-#         BGRimg = cv2.imread(imgPath)
-#         img = cv2.cvtColor(BGRimg, cv2.COLOR_BGR2RGB)
-
-#         ax = fig.add_subplot(1, len(postImgs[postSlug]), i)
-#         ax.get_yaxis().set_visible(False)
-#         ax.get_xaxis().set_visible(False)
-#         ax.imshow(img)
-#     plt.show()
+# In[57]:
 
 
-# # In[58]:
+def printImgGrid(postSlug):
+    fig = plt.figure()
+    for i, imgPath in enumerate(postImgs[postSlug], start=1):
+        BGRimg = cv2.imread(imgPath)
+        img = cv2.cvtColor(BGRimg, cv2.COLOR_BGR2RGB)
+
+        ax = fig.add_subplot(1, len(postImgs[postSlug]), i)
+        ax.get_yaxis().set_visible(False)
+        ax.get_xaxis().set_visible(False)
+        ax.imshow(img)
+    plt.show()
 
 
-# def displayRecImgs(slug, rec_outputs):
-#     printImgGrid(slug)
+# In[58]:
+
+
+def displayRecImgs(slug, rec_outputs):
+    printImgGrid(slug)
         
-#     for postSlug, _ in rec_outputs:
-#         printImgGrid(postSlug)
+    for postSlug, _ in rec_outputs:
+        printImgGrid(postSlug)
 
 
-# # In[59]:
+# In[59]:
 
 
-# test_input = '/2/may-flowers'
-# k = 10
-# showSim = True
-# sigFigs=4
-# recommend = artRecommender(test_input, cosine_sim_art,
-#                                k=10, showSim=True, sigFigs=4) 
-# recommend
+test_input = '/2/may-flowers'
+k = 10
+showSim = True
+sigFigs=4
+recommend = artRecommender(test_input, cosine_sim_art,
+                               k=10, showSim=True, sigFigs=4) 
+recommend
 
 
-# # In[60]:
+# In[60]:
 
 
-# displayRecImgs(test_input, recommend)
+displayRecImgs(test_input, recommend)
 
 
-# # ## Combining the Artwork Model with Literature Model
-# # 
-# # 
+# ## Combining the Artwork Model with Literature Model
+# 
+# 
 
-# # Now we would like to figure out how to combine the visual arts recommendation with the literary recommendations. At this point, we have already defined recommendation models for literature and visual arts independent of each other. We have also built cosine matrices that have the same shape as the number of posts on the website.
-# # 
-# # One approach is to keep the literature and visual models separate from each other and run the visual arts recommendations on pages tagged with "Visual Arts". This has the benefit of not integrating the two systems together which may cause inaccurate predictions over everything if done improperly. However, this approach fails to diversify the user's recommendations as this will lead to visual arts pages recommended to other visual arts pages or literature while prose (fiction, nonfiction, poetry) pages will continue to be recommended to other prose pages with little to no consideration for visual arts pages.
-# # 
-# # ---
-# # 
-# # A better approach utilizes what is similar about the content-based recommender and visual similarity recommender: **the cosine similarity**. We have proved this is possible before in the content-based recommender by combining the metadata feature vector with the content TF-IDF feature vector. The images had their features extracted to a 4096 vector space, so we can extend the content-based feature vector with this. 
-# # 
-# # This should theoretically allow any literary arts page to recommend other literary arts page with nonzero similarities between each of them and thus give each post a chance to recommend another. Therefore, visual arts works could be recommended on prose pages that already have images. It is expected that this situation has a low chance of occurring since the TF-IDF vector probably has a strong affinity for other works with text instead of a webpage with no text.  
+# Now we would like to figure out how to combine the visual arts recommendation with the literary recommendations. At this point, we have already defined recommendation models for literature and visual arts independent of each other. We have also built cosine matrices that have the same shape as the number of posts on the website.
+# 
+# One approach is to keep the literature and visual models separate from each other and run the visual arts recommendations on pages tagged with "Visual Arts". This has the benefit of not integrating the two systems together which may cause inaccurate predictions over everything if done improperly. However, this approach fails to diversify the user's recommendations as this will lead to visual arts pages recommended to other visual arts pages or literature while prose (fiction, nonfiction, poetry) pages will continue to be recommended to other prose pages with little to no consideration for visual arts pages.
+# 
+# ---
+# 
+# A better approach utilizes what is similar about the content-based recommender and visual similarity recommender: **the cosine similarity**. We have proved this is possible before in the content-based recommender by combining the metadata feature vector with the content TF-IDF feature vector. The images had their features extracted to a 4096 vector space, so we can extend the content-based feature vector with this. 
+# 
+# This should theoretically allow any literary arts page to recommend other literary arts page with nonzero similarities between each of them and thus give each post a chance to recommend another. Therefore, visual arts works could be recommended on prose pages that already have images. It is expected that this situation has a low chance of occurring since the TF-IDF vector probably has a strong affinity for other works with text instead of a webpage with no text.  
 
-# # In[61]:
+# In[61]:
 
 
-# # Test Suite for expected recommendations based on obvious relevancies
-# def test_system(cosine_sim):
-#     test_A = recommender_system('/3/blame-and-balm', cosine_sim,
-#                                    k=10, showSim=False, sigFigs=5) 
-#     test_B = recommender_system('/2/when-the-partys-over-interview', cosine_sim,
-#                                    k=10, showSim=False, sigFigs=5)
-#     test_C = recommender_system('/5/cognates', cosine_sim,
-#                                    k=10, showSim=False, sigFigs=5)
-#     test_D = recommender_system('/2023/missed-connections', cosine_sim,
-#                                    k=10, showSim=False, sigFigs=5)
+# Test Suite for expected recommendations based on obvious relevancies
+def test_system(cosine_sim):
+    test_A = recommender_system('/3/blame-and-balm', cosine_sim,
+                                   k=10, showSim=False, sigFigs=5) 
+    test_B = recommender_system('/2/when-the-partys-over-interview', cosine_sim,
+                                   k=10, showSim=False, sigFigs=5)
+    test_C = recommender_system('/5/cognates', cosine_sim,
+                                   k=10, showSim=False, sigFigs=5)
+    test_D = recommender_system('/2023/missed-connections', cosine_sim,
+                                   k=10, showSim=False, sigFigs=5)
     
-#     print('Test A\n  /3/blame-and-balm | Expect: /3/blame-and-balm-interview')
-#     print(test_A)
-#     print('Success!' if '/3/blame-and-balm-interview' in test_A else 'FAILED') 
+    print('Test A\n  /3/blame-and-balm | Expect: /3/blame-and-balm-interview')
+    print(test_A)
+    print('Success!' if '/3/blame-and-balm-interview' in test_A else 'FAILED') 
     
-#     print('\nTest B\n  /2/when-the-partys-over-interview | Expect: /2/when-the-partys-over')
-#     print(test_B)
-#     print('Success!' if '/2/when-the-partys-over' in test_B else 'FAILED') 
+    print('\nTest B\n  /2/when-the-partys-over-interview | Expect: /2/when-the-partys-over')
+    print(test_B)
+    print('Success!' if '/2/when-the-partys-over' in test_B else 'FAILED') 
     
-#     print('\nTest C\n  /5/cognates | Expect: para-mi-hermane (Spanish)')
-#     print(test_C)
-#     print('Success!' if '/4/para-mi-hermane' in test_C else 'FAILED')
+    print('\nTest C\n  /5/cognates | Expect: para-mi-hermane (Spanish)')
+    print(test_C)
+    print('Success!' if '/4/para-mi-hermane' in test_C else 'FAILED')
     
-#     print('\nTest D\n /2023/missed-connections | Expect: /6/you-have-created-an-imaginary-friend')
-#     print(test_D)
-#     print('Success!' if '/6/you-have-created-an-imaginary-friend' in test_D else 'FAILED')
+    print('\nTest D\n /2023/missed-connections | Expect: /6/you-have-created-an-imaginary-friend')
+    print(test_D)
+    print('Success!' if '/6/you-have-created-an-imaginary-friend' in test_D else 'FAILED')
 
 
-# # ### Combination 1: Visual Features and (Meta-TF-IDF)
+# ### Combination 1: Visual Features and (Meta-TF-IDF)
 
-# # In[62]:
+# In[62]:
 
 
-# print(clusterFeatsByPost.shape)
-# print(meta_tfidf_matrix.shape)
+print(clusterFeatsByPost.shape)
+print(meta_tfidf_matrix.shape)
 
 
-# # In[63]:
+# In[63]:
 
 
-# # clusterFeatsByPost is a scipy sparse matrix, so
-# # concatenating the feature vectors requires a scipy concatenation function
-# from scipy.sparse import hstack
+# clusterFeatsByPost is a scipy sparse matrix, so
+# concatenating the feature vectors requires a scipy concatenation function
+from scipy.sparse import hstack
 
-# litart_matrix = hstack((clusterFeatsByPost, meta_tfidf_matrix))
+litart_matrix = hstack((clusterFeatsByPost, meta_tfidf_matrix))
 
-# cosine_sim_litart_1 = cosine_similarity(litart_matrix, litart_matrix)
-# cosine_sim_litart_1.shape
+cosine_sim_litart_1 = cosine_similarity(litart_matrix, litart_matrix)
+cosine_sim_litart_1.shape
 
 
-# # In[64]:
+# In[64]:
 
 
-# recs_litart = {}
-# for slug in listRes:
-#     recommendations = recommender_system(slug, cosine_sim_litart_1,
-#                                          k=10, showSim=False, sigFigs=4)
-#     recs_litart[slug] = recommendations
+recs_litart = {}
+for slug in listRes:
+    recommendations = recommender_system(slug, cosine_sim_litart_1,
+                                         k=10, showSim=False, sigFigs=4)
+    recs_litart[slug] = recommendations
 
 
-# # In[65]:
+# In[65]:
 
 
-# direct_recs_litart = test_rec_diversity(recs_litart, showConnections=False)
-# direct_counts_litart = {}
-# for k,v in direct_recs_litart:
-#     direct_counts_litart[v] = direct_counts_litart.get(v, 0) + 1
-# print('(k, num) posts with direct recommendations:', direct_counts_litart)
-# direct_recs_litart[-10:]
+direct_recs_litart = test_rec_diversity(recs_litart, showConnections=False)
+direct_counts_litart = {}
+for k,v in direct_recs_litart:
+    direct_counts_litart[v] = direct_counts_litart.get(v, 0) + 1
+print('(k, num) posts with direct recommendations:', direct_counts_litart)
+direct_recs_litart[-10:]
 
 
-# # There are less posts that do not get any direct recommendations in this combining method than the three recommendation systems we have built so far. However, we can do better than this. If you modify the above code block to show the recommendation graph's connected components, there are narrower groupings with the largest group being around 84 and the smallest around 35.
+# There are less posts that do not get any direct recommendations in this combining method than the three recommendation systems we have built so far. However, we can do better than this. If you modify the above code block to show the recommendation graph's connected components, there are narrower groupings with the largest group being around 84 and the smallest around 35.
 
-# # In[66]:
+# In[66]:
 
 
-# test_system(cosine_sim_litart_1)
+test_system(cosine_sim_litart_1)
 
 
-# # All of the tests failed, so there is something wrong with this method. If we look closely and compare the literary features to the visual features, we will notice a difference in number ranges.
+# All of the tests failed, so there is something wrong with this method. If we look closely and compare the literary features to the visual features, we will notice a difference in number ranges.
 
-# # In[67]:
+# In[67]:
 
 
-# print(np.min(clusterFeatsByPost), np.max(clusterFeatsByPost), np.mean(clusterFeatsByPost))
-# print(np.min(tfidf_matrix), np.max(tfidf_matrix), np.mean(tfidf_matrix))
+print(np.min(clusterFeatsByPost), np.max(clusterFeatsByPost), np.mean(clusterFeatsByPost))
+print(np.min(tfidf_matrix), np.max(tfidf_matrix), np.mean(tfidf_matrix))
 
 
-# # ### Combination 2: Normalized Visual Features and (Meta-TF-IDF)
-# # It is possible that the data is being skewed significantly because of the difference in not only magnitudes but also averages. Let's try to normalize these extracted features.
+# ### Combination 2: Normalized Visual Features and (Meta-TF-IDF)
+# It is possible that the data is being skewed significantly because of the difference in not only magnitudes but also averages. Let's try to normalize these extracted features.
 
-# # In[68]:
+# In[68]:
 
 
-# from sklearn.preprocessing import normalize
-# norm_visual = normalize(clusterFeatsByPost)
-# norm_tfidf = normalize(tfidf_matrix)
+from sklearn.preprocessing import normalize
+norm_visual = normalize(clusterFeatsByPost)
+norm_tfidf = normalize(tfidf_matrix)
 
 
-# # In[69]:
+# In[69]:
 
 
-# litart_matrix_2 = hstack((norm_visual, norm_tfidf))
+litart_matrix_2 = hstack((norm_visual, norm_tfidf))
 
-# cosine_sim_litart_2 = cosine_similarity(litart_matrix_2, litart_matrix_2)
-# cosine_sim_litart_2.shape
+cosine_sim_litart_2 = cosine_similarity(litart_matrix_2, litart_matrix_2)
+cosine_sim_litart_2.shape
 
 
-# # In[70]:
+# In[70]:
 
 
-# recs_litart_2 = {}
-# for slug in listRes:
-#     recommendations = recommender_system(slug, cosine_sim_litart_2,
-#                                          k=10, showSim=False, sigFigs=4)
-#     recs_litart_2[slug] = recommendations
+recs_litart_2 = {}
+for slug in listRes:
+    recommendations = recommender_system(slug, cosine_sim_litart_2,
+                                         k=10, showSim=False, sigFigs=4)
+    recs_litart_2[slug] = recommendations
 
 
-# # In[71]:
+# In[71]:
 
 
-# direct_recs_litart_2 = test_rec_diversity(recs_litart_2, showConnections=False)
-# direct_counts_litart_2 = {}
-# for k,v in direct_recs_litart_2:
-#     direct_counts_litart_2[v] = direct_counts_litart_2.get(v, 0) + 1
-# print('(k, num) posts with direct recommendations:', direct_counts_litart_2)
-# direct_recs_litart_2[-10:]
+direct_recs_litart_2 = test_rec_diversity(recs_litart_2, showConnections=False)
+direct_counts_litart_2 = {}
+for k,v in direct_recs_litart_2:
+    direct_counts_litart_2[v] = direct_counts_litart_2.get(v, 0) + 1
+print('(k, num) posts with direct recommendations:', direct_counts_litart_2)
+direct_recs_litart_2[-10:]
 
 
-# # In[72]:
+# In[72]:
 
 
-# test_system(cosine_sim_litart_2)
+test_system(cosine_sim_litart_2)
 
 
-# # ### Combination 3: Mean Cosine Visual and (Meta-TF-IDF)
+# ### Combination 3: Mean Cosine Visual and (Meta-TF-IDF)
 
-# # In[73]:
+# In[73]:
 
 
-# cosine_sim_litart_3 = np.mean(np.array([cosine_sim_meta_tfidf, cosine_sim_art]), axis=0)
-# cosine_sim_litart_3
+cosine_sim_litart_3 = np.mean(np.array([cosine_sim_meta_tfidf, cosine_sim_art]), axis=0)
+cosine_sim_litart_3
 
 
-# # In[74]:
+# In[74]:
 
 
-# recs_litart_3 = {}
-# for slug in listRes:
-#     recommendations = recommender_system(slug, cosine_sim_litart_3,
-#                                          k=10, showSim=False, sigFigs=4)
-#     recs_litart_3[slug] = recommendations
+recs_litart_3 = {}
+for slug in listRes:
+    recommendations = recommender_system(slug, cosine_sim_litart_3,
+                                         k=10, showSim=False, sigFigs=4)
+    recs_litart_3[slug] = recommendations
 
 
-# # In[75]:
+# In[75]:
 
 
-# direct_recs_litart_3 = test_rec_diversity(recs_litart_3, showConnections=False)
-# direct_counts_litart_3 = {}
-# for k,v in direct_recs_litart_3:
-#     direct_counts_litart_3[v] = direct_counts_litart_3.get(v, 0) + 1
-# print('(k, num) posts with direct recommendations:', direct_counts_litart_3)
-# direct_recs_litart_3[-10:]
+direct_recs_litart_3 = test_rec_diversity(recs_litart_3, showConnections=False)
+direct_counts_litart_3 = {}
+for k,v in direct_recs_litart_3:
+    direct_counts_litart_3[v] = direct_counts_litart_3.get(v, 0) + 1
+print('(k, num) posts with direct recommendations:', direct_counts_litart_3)
+direct_recs_litart_3[-10:]
 
 
-# # In[76]:
+# In[76]:
 
 
-# test_system(cosine_sim_litart_3)
+test_system(cosine_sim_litart_3)
 
 
-# # ### Combination 4: Mean Cosine Visual + TF-IDF + Metadata Count
-# # Is there a better way to combine the recommendation results together? We have four different feature vectors and four different cosine similarity matrices. We found that the metadata counts had high base similarities on their own while TF-IDF on the content did not contribute to predictions to a impactful degree. Combining metadata with TF-IDF may have had an adverse effect on the final predictions. If the average of the cosine matrices were taken after isolating each part, it would place equal weights on the three similarity matrices. This may lead to visual art recommendations having relevance and interacting with literary works and vice versa.
+# ### Combination 4: Mean Cosine Visual + TF-IDF + Metadata Count
+# Is there a better way to combine the recommendation results together? We have four different feature vectors and four different cosine similarity matrices. We found that the metadata counts had high base similarities on their own while TF-IDF on the content did not contribute to predictions to a impactful degree. Combining metadata with TF-IDF may have had an adverse effect on the final predictions. If the average of the cosine matrices were taken after isolating each part, it would place equal weights on the three similarity matrices. This may lead to visual art recommendations having relevance and interacting with literary works and vice versa.
 
-# # In[77]:
+# In[77]:
 
 
-# cosine_sim_count.shape
-# cosine_sim_tfidf.shape
-# cosine_sim_meta_tfidf.shape
-# cosine_sim_art.shape
+cosine_sim_count.shape
+cosine_sim_tfidf.shape
+cosine_sim_meta_tfidf.shape
+cosine_sim_art.shape
 
 
-# # In[78]:
+# In[78]:
 
 
-# cosine_sim_3 = np.mean(np.array([cosine_sim_count, cosine_sim_tfidf, cosine_sim_art]), axis=0)
-# cosine_sim_3
+cosine_sim_3 = np.mean(np.array([cosine_sim_count, cosine_sim_tfidf, cosine_sim_art]), axis=0)
+cosine_sim_3
 
 
-# # In[79]:
+# In[79]:
 
 
-# recs_3 = {}
-# for slug in listRes:
-#     recommendations = recommender_system(slug, cosine_sim_3,
-#                                          k=10, showSim=False, sigFigs=4)
-#     recs_3[slug] = recommendations
+recs_3 = {}
+for slug in listRes:
+    recommendations = recommender_system(slug, cosine_sim_3,
+                                         k=10, showSim=False, sigFigs=4)
+    recs_3[slug] = recommendations
 
 
-# # In[80]:
+# In[80]:
 
 
-# direct_recs_3 = test_rec_diversity(recs_3, showConnections=False)
-# direct_counts_3 = {}
-# for k,v in direct_recs_3:
-#     direct_counts_3[v] = direct_counts_3.get(v, 0) + 1
-# print('(k, num) posts with direct recommendations:', direct_counts_3)
-# direct_recs_3[-10:]
+direct_recs_3 = test_rec_diversity(recs_3, showConnections=False)
+direct_counts_3 = {}
+for k,v in direct_recs_3:
+    direct_counts_3[v] = direct_counts_3.get(v, 0) + 1
+print('(k, num) posts with direct recommendations:', direct_counts_3)
+direct_recs_3[-10:]
 
 
-# # In[81]:
+# In[81]:
 
 
-# test_system(cosine_sim_3)
+test_system(cosine_sim_3)
 
 
-# # Reviewing these results, less than 20% of all posts do not have a direct recommendation. This is much better than the 33% from any of the other approaches and cosine models. The outstanding tests mostly pass with the exception of Cognates, although this could be human error because one of them is not tagged with their translated language and thus it isn't going to show up as a strong features in the cosine similarity.
+# Reviewing these results, less than 20% of all posts do not have a direct recommendation. This is much better than the 33% from any of the other approaches and cosine models. The outstanding tests mostly pass with the exception of Cognates, although this could be human error because one of them is not tagged with their translated language and thus it isn't going to show up as a strong features in the cosine similarity.
 
-# # In[82]:
+# In[82]:
 
 
-# # Convert the result to JSON and write to file
-# with open('recommender.json', mode='w', encoding='utf8') as outfile:
-#     outfile.write(json.dumps(recs_3))
+# Convert the result to JSON and write to file
+with open('recommender-auto.json', mode='w', encoding='utf8') as outfile:
+    outfile.write(json.dumps(recs_3))
 
 
-# # ## Closing Remarks
-# # 
-# # This Notebook has explored the different approaches to recommending literary arts between other works irrespective of user preferences. Literature recommendations rely heavily on content-based similarity models such as weighing the frequency of terms found across all works as well as semantics to figure out how to best fit the content. The metadata also plays a large role here as creatives often make works that are similar in style to each other and thus their other works are usually ranked higher than other works. Our findings have shown that with a small dataset of texts to work with, there are very low similarity values when using the TF-IDF. It would be worth exploring CNNs applied to literature to determine if a more complex, learned approach would fit the predictions better.
-# # 
-# # Recommending art did require the use of CNNs to extract features from the images. Using a pretrained model over a million images helped to make art similarity have a higher accuracy as well as demonstrating that pretrained models can be modified to pull out features rather than making predictions for image classification. Ample testing and observations supplied positive feedback for the predictions made and thus made the visual similarity model work despite the subjectivity of art.
-# # 
-# # Combining models together was a process that didn't have clear supporting articles on how to do it properly. However, creating tests and experimenting with the similarity function led to success by inferring from the math and other operations it took to fundamentally recommendation systems. The recommender system for Other People Magazine is a representation of how multiple models can ultimately make profound recommendations that wasn't expected to be so accurate.  
-# # 
-# # **This notebook has an impact on the Other People Magazine by demonstrating that it is possible to perform data science operations over the organization's resources. The custom-built API can always be modified to optimize the kind of information needed to perform a task and thus serves as a use case for further exploration on what can be computationally done for the arts and humanities.**
+# ## Closing Remarks
+# 
+# This Notebook has explored the different approaches to recommending literary arts between other works irrespective of user preferences. Literature recommendations rely heavily on content-based similarity models such as weighing the frequency of terms found across all works as well as semantics to figure out how to best fit the content. The metadata also plays a large role here as creatives often make works that are similar in style to each other and thus their other works are usually ranked higher than other works. Our findings have shown that with a small dataset of texts to work with, there are very low similarity values when using the TF-IDF. It would be worth exploring CNNs applied to literature to determine if a more complex, learned approach would fit the predictions better.
+# 
+# Recommending art did require the use of CNNs to extract features from the images. Using a pretrained model over a million images helped to make art similarity have a higher accuracy as well as demonstrating that pretrained models can be modified to pull out features rather than making predictions for image classification. Ample testing and observations supplied positive feedback for the predictions made and thus made the visual similarity model work despite the subjectivity of art.
+# 
+# Combining models together was a process that didn't have clear supporting articles on how to do it properly. However, creating tests and experimenting with the similarity function led to success by inferring from the math and other operations it took to fundamentally recommendation systems. The recommender system for Other People Magazine is a representation of how multiple models can ultimately make profound recommendations that wasn't expected to be so accurate.  
+# 
+# **This notebook has an impact on the Other People Magazine by demonstrating that it is possible to perform data science operations over the organization's resources. The custom-built API can always be modified to optimize the kind of information needed to perform a task and thus serves as a use case for further exploration on what can be computationally done for the arts and humanities.**
