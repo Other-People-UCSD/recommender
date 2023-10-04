@@ -32,6 +32,18 @@ from scipy.sparse import hstack
 
 from sklearn.preprocessing import normalize
 
+imgDir = './Calla-Lily/public/images/'
+imgPaths = []
+for (dirpath, _, filenames) in walk(imgDir):
+    filePath = [dirpath.replace('\\', '/') + '/' + filename for filename in filenames]
+    imgPaths.extend(filePath)
+print(imgPaths)
+
+# Display the images and their indices
+# for i,p in enumerate(imgPaths):
+#     print(i,p)
+
+
 # Convert the result to JSON and write to file
 with open('output.json', mode='w', encoding='utf8') as outfile:
     outfile.write('{"out":"this is a test output"}')
