@@ -469,12 +469,12 @@ listRes = [k for k,v in data.items()]
 
 
 # Assuming the notebook is in the documentation repo (./Docs/) and the images are in the Calla-Lily repo
-imgDir = '../Calla-Lily/public/images/'
+imgDir = './Calla-Lily/public/images/'
 imgPaths = []
 for (dirpath, _, filenames) in walk(imgDir):
     filePath = [dirpath.replace('\\', '/') + '/' + filename for filename in filenames]
     imgPaths.extend(filePath)
-imgPaths[:5]
+print(imgPaths[:5])
 
 # Display the images and their indices
 # for i,p in enumerate(imgPaths):
