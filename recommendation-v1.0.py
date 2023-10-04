@@ -495,6 +495,7 @@ for slug in tqdm(postSlugs, desc='assigning images to posts', position=0, leave=
         if path in postData['contentHtml']:
             postImgs[slug].append(fullPath)
 
+print(postImgs)
 
 # In[37]:
 
