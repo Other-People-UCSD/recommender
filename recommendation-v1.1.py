@@ -39,7 +39,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 # In[2]:
 
 
-res = requests.get('https://www.otherpeoplesd.com/api/post-data.json')
+res = requests.get('https://calla-lily-git-publishing-other-people.vercel.app/api/post-data.json')
 data = json.loads(res.text)
 postSlugs = data.keys()
 # Convert the json data to a list for indexing
@@ -458,7 +458,7 @@ import cv2
 
 # Get all posts regardless if they contain images
 # This endpoint runs a little faster than the post-data endpoint and we only need to get the postSlugs 
-res = requests.get('https://www.otherpeoplesd.com/api/post-metadata.json')
+res = requests.get('https://calla-lily-git-publishing-other-people.vercel.app/api/post-metadata.json')
 data = json.loads(res.text)
 postSlugs = data.keys()
 # Convert the json data to a list for indexing
@@ -489,7 +489,7 @@ print(imgPaths[:5])
 postImgs = {}
 
 for slug in tqdm(postSlugs, desc='assigning images to posts', position=0, leave=True):
-    postRes = requests.get('https://www.otherpeoplesd.com/api/post' + slug)
+    postRes = requests.get('https://calla-lily-git-publishing-other-people.vercel.app/api/post' + slug)
     postData = json.loads(postRes.text)
     postImgs[slug] = []
     for fullPath in imgPaths:
